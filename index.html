@@ -6,10 +6,10 @@
   <title>★청년버팀목대출 월 이자금액 계산기</title>
   <style>
     body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-    input[type="number"] { font-size: 18px; padding: 8px; width: 100%; margin-bottom: 10px; }
+    input[type="text"] { font-size: 18px; padding: 8px; width: 100%; margin-bottom: 10px; }
     label { display: block; margin: 5px 0; }
     button { font-size: 18px; padding: 10px; margin-top: 10px; width: 100%; }
-    .result { margin-top: 20px; font-size: 20px; font-weight: bold; }
+    .result { margin-top: 20px; font-size: 20px; font-weight: bold; white-space: pre-line; }
   </style>
 </head>
 <body>
@@ -17,10 +17,10 @@
 <h2>★청년버팀목대출 월 이자금액 계산기</h2>
 
 <label>연소득 (부부합산, 원)</label>
-<input id="b3" type="number" placeholder="연소득">
+<input id="b3" type="text" placeholder="예: 5,000만" oninput="formatCurrency(this)">
 
 <label>전세금 (원)</label>
-<input id="b4" type="number" placeholder="전세금">
+<input id="b4" type="text" placeholder="예: 2,000만" oninput="formatCurrency(this)">
 
 <label>다자녀가구 (자녀 수 입력)</label>
 <input id="b11" type="number" placeholder="자녀 수"><br>
@@ -40,13 +40,20 @@
 <h2 class="result" id="result"></h2>
 
 <script>
+function formatCurrency(input) {
+  // 숫자만 남기고 3자리마다 쉼표 추가
+  let num = input.value.replace(/[^0-9]/g,'');
+  input.value = num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 async function calc() {
-  // 여기에 웹앱 URL 바로 넣음
+  // 웹앱 URL
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGNZnXwUjSw2ZeUGzXNxNH-RE1Y9_7CsYbB4nJZTWEfJhyspMXuYF96Byxxy9l0-DrHg/exec";
 
+  // 숫자만 파싱
   const data = {
-    b3: Number(document.getElementById('b3').value),
-    b4: Number(document.getElementById('b4').value),
+    b3: Number(document.getElementById('b3').value.replace(/,/g,'')),
+    b4: Number(document.getElementById('b4').value.replace(/,/g,'')),
     b11: Number(document.getElementById('b11').value),
     b6: document.getElementById('b6').checked,
     b8: document.getElementById('b8').checked,
@@ -68,8 +75,13 @@ async function calc() {
     if (!res.ok) throw new Error("웹앱 호출 실패");
 
     const json = await res.json();
+
+    // 결과값 정수, B29 % 변환
+    const intResult = Math.round(json.result).toLocaleString();
+    const percentResult = (json.result2 * 100).toFixed(2) + "%";
+
     document.getElementById("result").innerText =
-      `계산 결과: ${json.result.toLocaleString()}원`;
+      `월 이자금액: ${intResult}원\nB29: ${percentResult}`;
   } catch (err) {
     document.getElementById("result").innerText =
       `계산 불가: 웹앱 URL 확인 필요`;
