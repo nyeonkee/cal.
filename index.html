@@ -49,10 +49,19 @@ function formatCurrency(input) {
 async function calc() {
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGNZnXwUjSw2ZeUGzXNxNH-RE1Y9_7CsYbB4nJZTWEfJhyspMXuYF96Byxxy9l0-DrHg/exec";
 
-  // 쉼표 제거 후 숫자 변환
+  const b3Value = Number(document.getElementById('b3').value.replace(/,/g,''));
+  const b4Value = Number(document.getElementById('b4').value.replace(/,/g,''));
+
+  // 조건 체크: 연소득 > 7500만 OR 전세금 > 3억 → 결과 안 나옴
+  if (b3Value > 75000000 || b4Value > 300000000) {
+    document.getElementById("result").innerText = 
+      "연소득이 7,500만원 초과이거나 전세금이 3억원 초과하면 계산할 수 없습니다.";
+    return;
+  }
+
   const data = {
-    b3: Number(document.getElementById('b3').value.replace(/,/g,'')),
-    b4: Number(document.getElementById('b4').value.replace(/,/g,'')),
+    b3: b3Value,
+    b4: b4Value,
     b11: Number(document.getElementById('b11').value),
     b6: document.getElementById('b6').checked,
     b8: document.getElementById('b8').checked,
@@ -75,16 +84,16 @@ async function calc() {
 
     const json = await res.json();
 
-    // B1 정수화
+    // B1 → 정수
     const intResult = Math.round(Number(json.result)).toLocaleString();
 
-    // B29 안전하게 % 변환
+    // B29 → NaN 방지, 기본값 0.0%
     let b29 = Number(json.result2);
-    if (isNaN(b29)) b29 = 0;
-    const percentResult = (b29 * 100).toFixed(2) + "%";
+    if (isNaN(b29)) b29 = 0.0;
+    const percentResult = (b29 * 100).toFixed(1) + "%";
 
     document.getElementById("result").innerText =
-      `월 이자금액: ${intResult}원\nB29: ${percentResult}`;
+      `월 이자금액: ${intResult}원\n대출 금리: ${percentResult}`;
   } catch (err) {
     document.getElementById("result").innerText =
       `계산 불가: 웹앱 URL 확인 필요`;
