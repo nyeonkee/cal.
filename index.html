@@ -87,7 +87,7 @@ async function calc() {
 
     const json = await res.json();
 
-    // 2️⃣ B1, B29 안전하게 처리
+    // 2️⃣ B1, B27 안전하게 처리
     let b1 = Number(json.result);
     if (isNaN(b1)) {
       document.getElementById("result").innerHTML = "<span class='warning'>계산 불가: 월 이자금액을 불러올 수 없습니다.</span>";
@@ -95,10 +95,10 @@ async function calc() {
     }
     b1 = Math.round(b1);
 
-    let b29 = Number(json.result2);
-    if (isNaN(b29)) b29 = 0.0;
+    let b27 = Number(json.result2);
+    if (isNaN(b27)) b27 = 0.0;
 
-    const percentResult = (b29 * 100).toFixed(1) + "%";
+    const percentResult = (b27 * 100).toFixed(1) + "%";
 
     document.getElementById("result").innerHTML =
       `월 이자금액: ${b1.toLocaleString()}원\n대출 금리: ${percentResult}`;
@@ -111,3 +111,4 @@ async function calc() {
 
 </body>
 </html>
+
