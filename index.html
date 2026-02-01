@@ -6,7 +6,7 @@
   <title>★청년버팀목대출 월 이자금액 계산기</title>
   <style>
     body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
-    input[type="text"] { font-size: 18px; padding: 8px; width: 100%; margin-bottom: 10px; }
+    input[type="text"], input[type="number"] { font-size: 18px; padding: 8px; width: 100%; margin-bottom: 10px; }
     label { display: block; margin: 5px 0; }
     button { font-size: 18px; padding: 10px; margin-top: 10px; width: 100%; }
     .result { margin-top: 20px; font-size: 20px; font-weight: bold; white-space: pre-line; }
@@ -40,17 +40,16 @@
 <h2 class="result" id="result"></h2>
 
 <script>
+// B3, B4 입력시 천 단위 쉼표 표시
 function formatCurrency(input) {
-  // 숫자만 남기고 3자리마다 쉼표 추가
   let num = input.value.replace(/[^0-9]/g,'');
   input.value = num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 async function calc() {
-  // 웹앱 URL
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGNZnXwUjSw2ZeUGzXNxNH-RE1Y9_7CsYbB4nJZTWEfJhyspMXuYF96Byxxy9l0-DrHg/exec";
 
-  // 숫자만 파싱
+  // 쉼표 제거 후 숫자 변환
   const data = {
     b3: Number(document.getElementById('b3').value.replace(/,/g,'')),
     b4: Number(document.getElementById('b4').value.replace(/,/g,'')),
@@ -76,9 +75,13 @@ async function calc() {
 
     const json = await res.json();
 
-    // 결과값 정수, B29 % 변환
-    const intResult = Math.round(json.result).toLocaleString();
-    const percentResult = (json.result2 * 100).toFixed(2) + "%";
+    // B1 정수화
+    const intResult = Math.round(Number(json.result)).toLocaleString();
+
+    // B29 안전하게 % 변환
+    let b29 = Number(json.result2);
+    if (isNaN(b29)) b29 = 0;
+    const percentResult = (b29 * 100).toFixed(2) + "%";
 
     document.getElementById("result").innerText =
       `월 이자금액: ${intResult}원\nB29: ${percentResult}`;
