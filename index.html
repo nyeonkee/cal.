@@ -33,8 +33,8 @@ button{width:100%;margin-top:20px;padding:14px;font-size:16px;background:#2f80ed
 <label>전세금 (원)</label>
 <input type="text" id="jeonse" placeholder="예: 300,000,000">
 
-<label>자녀 수</label>
-<input type="number" id="children" min="0">
+<label>자녀수(명)</label>
+<input type="number" id="children" min="0" placeholder="예: 1">
 
 <label>금리우대 (중복 불가)</label>
 <div class="chk"><input type="checkbox" id="basic"> 기초생활수급·차상위 (소득 ≤ 4천)</div>
@@ -125,13 +125,14 @@ async function calc(){
     if(final<1.0) final=1.0
 
     const loan=jeonseVal*0.8
+    const selfMoneyCalc = jeonseVal - loan
     const monthly=Math.floor((loan*(final/100))/12)
 
     interest.innerText=comma(monthly)+"원"
     baseRate.innerText=base.toFixed(1)+"%"
     finalRate.innerText=final.toFixed(1)+"%"
     discountElem().innerText=discount.toFixed(1)+"%p"
-    selfMoney.innerText=comma(data.selfMoney)+"원"
+    selfMoney.innerText = comma(selfMoneyCalc) + "원"
     detail.innerText="적용: "+applied.join(", ")
 
     result.style.display="block"
@@ -143,5 +144,6 @@ function discountElem(){return document.getElementById("discount")}
 </script>
 </body>
 </html>
+
 
 
