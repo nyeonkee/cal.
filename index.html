@@ -11,11 +11,13 @@ label { display: block; margin: 5px 0; }
 button { font-size: 18px; padding: 10px; margin-top: 10px; width: 100%; }
 .result { margin-top: 20px; font-size: 20px; font-weight: bold; white-space: pre-line; color: #333; }
 .warning { color: red; }
+.info { font-size: 14px; color: #555; margin-bottom: 10px; }
 </style>
 </head>
 <body>
 
 <h2>★청년버팀목대출 월 이자금액 계산기</h2>
+<div class="info">전세금의 최대 80% 대출금이며, 심사결과에 따라 달라질 수 있음</div>
 
 <label>연소득 (부부합산, 원)</label>
 <input id="b3" type="text" placeholder="예: 5,000만" oninput="formatCurrency(this)">
@@ -41,6 +43,7 @@ button { font-size: 18px; padding: 10px; margin-top: 10px; width: 100%; }
 <h2 class="result" id="result"></h2>
 
 <script>
+// 입력 시 천 단위 쉼표
 function formatCurrency(input) {
   let num = input.value.replace(/[^0-9]/g,'');
   input.value = num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -52,7 +55,7 @@ async function calc() {
   const b3Value = Number(document.getElementById('b3').value.replace(/,/g,''));
   const b4Value = Number(document.getElementById('b4').value.replace(/,/g,''));
 
-  // 1️⃣ 입력 유효성 + 초과 체크
+  // 입력 유효성 + 초과 체크
   if (isNaN(b3Value) || isNaN(b4Value)) {
     document.getElementById("result").innerHTML = "<span class='warning'>숫자를 정확히 입력해주세요.</span>";
     return;
@@ -87,7 +90,7 @@ async function calc() {
 
     const json = await res.json();
 
-    // 2️⃣ B1, B27 안전하게 처리
+    // 월 이자금액(B1)
     let b1 = Number(json.result);
     if (isNaN(b1)) {
       document.getElementById("result").innerHTML = "<span class='warning'>계산 불가: 월 이자금액을 불러올 수 없습니다.</span>";
@@ -95,13 +98,21 @@ async function calc() {
     }
     b1 = Math.round(b1);
 
-    let b27 = Number(json.result2);
-    if (isNaN(b27)) b27 = 0.0;
+    // 기존 금리(B29)
+    let b29 = Number(json.result2);
+    if (isNaN(b29)) b29 = 0.0;
+    const percentResult = (b29 * 100).toFixed(1) + "%";
 
-    const percentResult = (b27 * 100).toFixed(1) + "%";
+    // 본인 투입금액(B30)
+    let b30 = Number(json.result3);
+    if (isNaN(b30)) b30 = 0;
+    const b30Display = b30.toLocaleString() + "원";
 
     document.getElementById("result").innerHTML =
-      `월 이자금액: ${b1.toLocaleString()}원\n대출 금리: ${percentResult}`;
+      `월 이자금액: ${b1.toLocaleString()}원
+기존 금리: ${percentResult}
+우대금리 적용 후: ${percentResult}  // 필요 시 계산값 다르게 반영
+본인 투입금액: ${b30Display}`;
   } catch (err) {
     document.getElementById("result").innerHTML = "<span class='warning'>계산 불가: 웹앱 URL 확인 필요</span>";
     console.error(err);
@@ -111,4 +122,3 @@ async function calc() {
 
 </body>
 </html>
-
