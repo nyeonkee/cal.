@@ -4,21 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>★청년버팀목대출 월 이자금액 계산기</title>
+
   <style>
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      max-width: 720px;
-      margin: 0 auto;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: #f7f7f7;
       padding: 20px;
-      background: #f9fafb;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 480px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
     h1 {
-      font-size: 22px;
+      font-size: 20px;
       margin-bottom: 8px;
     }
-    .sub {
+    .desc {
       font-size: 13px;
-      color: #555;
+      color: #666;
       margin-bottom: 20px;
     }
     label {
@@ -26,111 +33,132 @@
       margin-top: 14px;
       font-weight: 600;
     }
-    input[type="number"] {
+    input[type="text"] {
       width: 100%;
       padding: 10px;
-      font-size: 15px;
       margin-top: 6px;
+      font-size: 16px;
     }
-    .checkbox-group label {
+    .options label {
       font-weight: normal;
       margin-top: 6px;
     }
     button {
-      margin-top: 24px;
       width: 100%;
+      margin-top: 20px;
       padding: 14px;
       font-size: 16px;
-      background: #2563eb;
-      color: white;
+      background: #2f80ed;
+      color: #fff;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
     }
     .result {
-      margin-top: 28px;
-      padding: 16px;
-      background: white;
-      border-radius: 8px;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
+      font-size: 15px;
       line-height: 1.7;
     }
-    .result strong {
-      color: #111827;
+    .warn {
+      color: red;
+      margin-top: 10px;
     }
   </style>
 </head>
 
 <body>
+  <div class="box">
+    <h1>★청년버팀목대출 월 이자금액 계산기</h1>
+    <div class="desc">
+      전세금의 최대 80% 대출 가능하며,<br>
+      심사 결과에 따라 달라질 수 있습니다.
+    </div>
 
-<h1>★청년버팀목대출 월 이자금액 계산기</h1>
-<div class="sub">
-  전세금의 최대 80% 대출 가능하며, 심사 결과에 따라 달라질 수 있음
-</div>
+    <label>연소득 (부부합산, 원)</label>
+    <input type="text" id="income" placeholder="예: 75,000,000" />
 
-<label>연소득금액 (부부합산, 원)</label>
-<input id="income" type="number" placeholder="예: 60000000" />
+    <label>전세금 (원)</label>
+    <input type="text" id="jeonse" placeholder="예: 300,000,000" />
 
-<label>전세금 (원)</label>
-<input id="deposit" type="number" placeholder="예: 250000000" />
+    <div class="options">
+      <label><input type="checkbox"> 지방 소재 주택</label>
+      <label><input type="checkbox"> 기초생활수급·차상위</label>
+      <label><input type="checkbox"> 한부모가구</label>
+      <label><input type="checkbox"> 장애인·다문화·노인부양·고령자가구</label>
+      <label><input type="checkbox"> 다자녀가구</label>
+      <label><input type="checkbox"> 주거안정 월세대출 성실납부</label>
+      <label><input type="checkbox"> 부동산 전자계약</label>
+      <label><input type="checkbox"> 만 25세 미만 단독세대주</label>
+      <label><input type="checkbox"> 중소기업 취업·창업 청년</label>
+      <label><input type="checkbox"> 대출신청금액 30% 이하</label>
+    </div>
 
-<div class="checkbox-group">
-  <label><input type="checkbox" /> 지방 소재 주택</label>
-  <label><input type="checkbox" /> 기초생활수급·차상위</label>
-  <label><input type="checkbox" /> 한부모가구</label>
-  <label><input type="checkbox" /> 장애인·다문화·노인부양·고령자가구</label>
-  <label>다자녀가구 (자녀수 입력)</label>
-  <input type="number" placeholder="예: 2" />
-  <label><input type="checkbox" /> 주거안정 월세대출 성실납부</label>
-  <label><input type="checkbox" /> 부동산 전자계약</label>
-  <label><input type="checkbox" /> 만 25세 미만 단독세대주</label>
-  <label><input type="checkbox" /> 중소기업 취업·창업 청년</label>
-  <label><input type="checkbox" /> 대출신청금액이 전세금의 30% 이하</label>
-</div>
+    <button onclick="calculate()">계산하기</button>
 
-<button onclick="calculate()">계산하기</button>
+    <div class="warn" id="warn"></div>
 
-<div class="result">
-  <p>월 이자금액: <strong id="monthlyInterest">-</strong></p>
-  <p>기존 금리: <strong id="baseRate">-</strong></p>
-  <p>우대금리 적용 후: <strong id="finalRate">-</strong></p>
-  <p>본인 투입금액: <strong id="selfMoney">-</strong></p>
-</div>
+    <div class="result" id="result" style="display:none;">
+      <div>월 이자금액: <b id="interest"></b></div>
+      <div>기존 금리: <b id="baseRate"></b></div>
+      <div>우대금리 적용 후: <b id="finalRate"></b></div>
+      <div>본인 투입금액: <b id="selfMoney"></b></div>
+    </div>
+  </div>
 
 <script>
-const WEB_APP_URL =
-  "https://script.google.com/macros/s/AKfycbzGNZnXwUjSw2ZeUGzXNxNH-RE1Y9_7CsYbB4nJZTWEfJhyspMXuYF96Byxxy9l0-DrHg/exec";
+  const WEB_APP_URL =
+    "https://script.google.com/macros/s/AKfycbzGNZnXwUjSw2ZeUGzXNxNH-RE1Y9_7CsYbB4nJZTWEfJhyspMXuYF96Byxxy9l0-DrHg/exec";
 
-async function calculate() {
-  const income = Number(document.getElementById("income").value);
-  const deposit = Number(document.getElementById("deposit").value);
-
-  if (income > 75000000 || deposit > 300000000) {
-    alert("소득 또는 전세금 기준 초과로 계산할 수 없습니다.");
-    return;
+  function addComma(value) {
+    return Number(value).toLocaleString("ko-KR");
   }
 
-  try {
-    const res = await fetch(WEB_APP_URL);
-    const data = await res.json();
-
-    document.getElementById("baseRate").innerText = data.baseRate;
-    document.getElementById("finalRate").innerText = data.finalRate;
-    document.getElementById("selfMoney").innerText = data.selfMoney;
-
-    // 월 이자 계산
-    const loan = deposit * 0.8;
-    const rate = parseFloat(data.finalRate) / 100;
-    const monthlyInterest = Math.round((loan * rate) / 12);
-
-    document.getElementById("monthlyInterest").innerText =
-      monthlyInterest.toLocaleString() + "원";
-
-  } catch (e) {
-    alert("계산 중 오류가 발생했습니다.");
-    console.error(e);
+  function onlyNumber(el) {
+    el.value = el.value.replace(/[^0-9]/g, "");
+    if (el.value) el.value = addComma(el.value);
   }
-}
+
+  document.getElementById("income").addEventListener("input", e => onlyNumber(e.target));
+  document.getElementById("jeonse").addEventListener("input", e => onlyNumber(e.target));
+
+  async function calculate() {
+    document.getElementById("warn").innerText = "";
+
+    const income =
+      Number(document.getElementById("income").value.replace(/,/g, ""));
+    const jeonse =
+      Number(document.getElementById("jeonse").value.replace(/,/g, ""));
+
+    if (income > 75000000 || jeonse > 300000000) {
+      document.getElementById("warn").innerText =
+        "연소득 7,500만원 초과 또는 전세금 3억원 초과 시 계산할 수 없습니다.";
+      return;
+    }
+
+    try {
+      const res = await fetch(WEB_APP_URL);
+      const data = await res.json();
+
+      document.getElementById("baseRate").innerText = data.baseRate;
+      document.getElementById("finalRate").innerText = data.finalRate;
+      document.getElementById("selfMoney").innerText = data.selfMoney;
+
+      // 월 이자 계산 (전세금의 80% 기준)
+      const loan = jeonse * 0.8;
+      const rate = parseFloat(data.finalRate);
+      const monthlyInterest = Math.floor((loan * rate / 100) / 12);
+
+      document.getElementById("interest").innerText =
+        addComma(monthlyInterest) + "원";
+
+      document.getElementById("result").style.display = "block";
+    } catch (e) {
+      document.getElementById("warn").innerText =
+        "계산 중 오류가 발생했습니다.";
+    }
+  }
 </script>
-
 </body>
 </html>
