@@ -254,10 +254,17 @@ display: block;
 
 function formatUnit(v){
   if(!v) return "";
+
+  // 1억 이상 → 억 단위 (소수 2자리, 불필요한 0 제거)
   if(v >= 100000000){
-    return (v / 100000000).toFixed(1).replace(/\.0$/,"") + "억 원";
+    return (v / 100000000)
+      .toFixed(2)
+      .replace(/\.00$/,"")
+      .replace(/(\.\d)0$/,"$1") + "억 원";
   }
-  return Math.floor(v / 10000) + "만 원";
+
+  // 1억 미만 → 만 단위 + 콤마
+  return Math.floor(v / 10000).toLocaleString() + "만 원";
 }
 
 function getBaseRate(income){
