@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -58,6 +59,7 @@
   width: auto;     
   padding: 0;
   margin: 0;
+margin-right: 0;
   flex-shrink: 0;
 }
 
@@ -252,8 +254,6 @@ const r = document.getElementById("result");
     warn.innerText = "연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
     
     return;
-
-r.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   let base = getBaseRate(incomeVal);
@@ -296,6 +296,7 @@ r.scrollIntoView({ behavior: "smooth", block: "start" });
   const selfMoneyCalc = jeonseVal - loan;
 
   r.classList.add("show");
+r.style.display = "block";
 
 setTimeout(() => {
   r.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -311,4 +312,5 @@ setTimeout(() => {
 </script>
 </body>
 </html>
+
 
