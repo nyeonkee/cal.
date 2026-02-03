@@ -40,6 +40,7 @@
     border-radius: 12px;
     border: 1px solid #ddd;
     box-sizing: border-box;
+margin-bottom: 2px;
   }
 
   .check-group {
@@ -137,6 +138,8 @@ display: none;
   color: #2d7cff;
   margin-top: 4px;
   font-weight: 600;
+display: block;
+  padding-left: 4px;
 }
 
 </style>
@@ -330,11 +333,18 @@ r.style.display = "block";
 requestAnimationFrame(() => {
   r.classList.add("show");
 
-  requestAnimationFrame(() => {
-    const y = r.getBoundingClientRect().top + window.pageYOffset - 12;
-    window.scrollTo({ top: y, behavior: "smooth" });
+  r.style.display = "block";
+
+setTimeout(() => {
+  r.classList.add("show");
+
+  const y = r.offsetTop - 12;
+  window.scrollTo({
+    top: y,
+    behavior: "smooth"
   });
-});
+}, 150);
+
   interest.innerText = comma(monthly) + "원";
   baseRate.innerText = base.toFixed(1) + "%";
   discountRate.innerText = discount.toFixed(1) + "%p";
@@ -346,5 +356,3 @@ requestAnimationFrame(() => {
 </script>
 </body>
 </html>
-
-
