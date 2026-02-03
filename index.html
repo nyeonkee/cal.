@@ -88,11 +88,6 @@
 
   .result {
     display: none;
-    padding: 20px;
-    border-radius: 16px;
-    background: #e6f0ff;
-    box-shadow: 0 8px 24px rgba(0,0,0,.1);
-    margin-top: 16px;
   }
 
   .result div {
@@ -131,11 +126,6 @@
     color: #999;
     margin-top: 12px;
   }
-
-  @media screen and (max-width: 480px){
-    .highlight { font-size: 22px; }
-    input[type="text"], input[type="number"] { font-size: 14px; padding:12px; }
-  }
 </style>
 </head>
 
@@ -144,13 +134,13 @@
 
   <div class="card">
     <h1>청년버팀목대출 계산기</h1>
-    <div class="sub">내 조건이면 월 이자액이 얼마일까?</div>
+    <div class="sub">내 조건이면 월 이자 얼마나 나올까?</div>
 
     <label>연소득 (원)</label>
-    <input id="income" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="예: 40,000,000" />
+    <input id="income" type="text" placeholder="예: 40,000,000" />
 
     <label>전세금 (원)</label>
-    <input id="jeonse" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="예: 130,000,000" />
+    <input id="jeonse" type="text" placeholder="예: 130,000,000" />
 
     <label>자녀수 (명)</label>
     <input id="children" type="number" placeholder="예: 1" />
@@ -173,8 +163,6 @@
   </div>
 
   <div class="card result" id="result">
-    <div id="incomeText" style="font-size:14px; color:#555; margin-bottom:4px;"></div>
-    <div id="jeonseText" style="font-size:14px; color:#555; margin-bottom:4px;"></div>
     <div class="highlight">월 이자: <span id="interest"></span></div>
     <div>기본금리: <span id="baseRate"></span></div>
     <div>우대금리: <span id="discountRate"></span></div>
@@ -182,8 +170,9 @@
     <div>본인 투입금액: <span id="selfMoney"></span></div>
     <div id="detail"></div>
     <div class="blog-note">
-      본 계산기는 참고용이며, 실제 대출 조건과 다를 수 있습니다. 정확한 사항은 은행에 문의하세요. 
-      계산 방법은 <a href="https://m.blog.naver.com/mooonda" target="_blank">블로그</a>에서 확인하세요.
+      본 계산기는 참고용이며, 실제 대출 조건과 다를 수 있습니다. 
+      정확한 사항과 계산방법은 
+      <a href="https://m.blog.naver.com/mooonda" target="_blank">블로그</a>에서 꼭 확인하세요.
     </div>
   </div>
 
@@ -195,7 +184,6 @@ const WEB_APP_URL = "https://script.googleusercontent.com/macros/echo?user_conte
 
 const comma = n => n.toLocaleString();
 
-// 숫자 입력시 콤마 처리
 ["income","jeonse"].forEach(id=>{
   document.getElementById(id).addEventListener("input",e=>{
     let v=e.target.value.replace(/[^0-9]/g,"");
@@ -203,41 +191,29 @@ const comma = n => n.toLocaleString();
   });
 });
 
-// 한글 단위 표시 함수
-function formatKRWText(n) {
-  if(n >= 100000000) return (n/100000000).toFixed(1) + "억 원";
-  if(n >= 10000) return (n/10000).toFixed(0) + "만 원";
-  return n.toLocaleString() + "원";
-}
-
 async function calc(){
-  const warn = document.getElementById("warn");
-  const r = document.getElementById("result");
   warn.innerText="";
-  r.style.display="none";
+  result.style.display="none";
 
-  const incomeVal = Number(document.getElementById("income").value.replace(/,/g,""));
-  const jeonseVal = Number(document.getElementById("jeonse").value.replace(/,/g,""));
-  const child = Number(document.getElementById("children").value||0);
+  const incomeVal = Number(income.value.replace(/,/g,""));
+  const jeonseVal = Number(jeonse.value.replace(/,/g,""));
+  const child = Number(children.value||0);
 
   if(incomeVal>75000000||jeonseVal>300000000){
     warn.innerText="연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
     return;
   }
 
-  // 계산 상태 표시
-  warn.innerText = "계산 중...";
-
-  const res = await fetch(https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLg5YqRBh_V7yYcnKRandmjAXwIsyxBg13EEDGbfF3k8_4IV9pC0enBOinJKd2HZPdmH74Pd1bX9M12KkO8caxKhkCSyMbw0M8brw7tO7jnlVxuycGj9DpmBYuIEwuky4b_z4CBewscyw6a5UhTirwdZsgpsdJV9ZygvHtLdjvFz_IQU3uQ92JCVMJe-GqUcOoWHXyvmkLem4rI5o51JVfwm2pvoi-jmWnjnwgNyKN5tYJe7os9ZO1hJsh_xqdnGqxRkIcNVzLBiVXWlJoMp53sFxsX_Lg&lib=McujhMwZSXAj5r31WpYZO14Lq-ofEAQ5F);
+  const res = await fetch(https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLh2TVMTpXCYO1AzcVggX9HZf3WHL7N1vsPHfmGxx6s592IBam8Z51__hnacV1lEXrPoT0OPvSUX8pXNIrcmDM9cSl6t4A3CBnNu-9dHdUpzCCN3eJD1lMpUNNGuhSS9IwYDLMfEXuvdQ_5K6R2BMuBs_Oxl6b8nIw79uwRMCXr_P5ERJn3ZFQWrpvSUurlISFG3dflpNbzNAIwybOXEoWpmRHRKweLokINEV7ucf2u_jH-TLFSTKCoNbv7hrd_zrBOzrCaop11ohZTHh5m8ZO0T0Udh6Q&lib=McujhMwZSXAj5r31WpYZO14Lq-ofEAQ5F);
   const data = await res.json();
   let base = data.baseRate;
   let discount = 0;
   let applied=[];
 
   let candidates=[];
-  if(document.getElementById("basic").checked&&incomeVal<=40000000) candidates.push({v:1.0,t:"기초·차상위"});
-  if(document.getElementById("single").checked&&incomeVal<=50000000) candidates.push({v:1.0,t:"한부모"});
-  if(document.getElementById("weak").checked) candidates.push({v:0.2,t:"취약가구"});
+  if(basic.checked&&incomeVal<=40000000) candidates.push({v:1.0,t:"기초·차상위"});
+  if(single.checked&&incomeVal<=50000000) candidates.push({v:1.0,t:"한부모"});
+  if(weak.checked) candidates.push({v:0.2,t:"취약가구"});
   if(child>=1){
     const v=child===1?0.3:child===2?0.5:0.7;
     candidates.push({v:v,t:`다자녀(${child}명)`});
@@ -245,18 +221,18 @@ async function calc(){
 
   if(candidates.length){
     candidates.sort((a,b)=>b.v-a.v);
-    discount += candidates[0].v;
+    discount+=candidates[0].v;
     applied.push(candidates[0].t);
   }
 
-  if(document.getElementById("rent").checked){discount+=0.2; applied.push("월세 성실납부");}
-  if(document.getElementById("econtract").checked){discount+=0.1; applied.push("전자계약");}
-  if(document.getElementById("young").checked){discount+=0.3; applied.push("25세 미만 단독");}
-  if(document.getElementById("company").checked){discount+=0.3; applied.push("중소기업 청년");}
-  if(document.getElementById("thirty").checked){discount+=0.2; applied.push("대출 30% 이하");}
-  if(document.getElementById("local").checked){discount+=0.2; applied.push("지방 주택");}
+  if(rent.checked){discount+=0.2;applied.push("월세 성실납부");}
+  if(econtract.checked){discount+=0.1;applied.push("전자계약");}
+  if(young.checked){discount+=0.3;applied.push("25세 미만 단독");}
+  if(company.checked){discount+=0.3;applied.push("중소기업 청년");}
+  if(thirty.checked){discount+=0.2;applied.push("대출 30% 이하");}
+  if(local.checked){discount+=0.2;applied.push("지방 주택");}
 
-  let max = 0.5;
+  let max=0.5;
   if(applied.includes("기초·차상위")||applied.includes("한부모")) max=1.0;
   else if(child>=1) max=0.7;
   discount=Math.min(discount,max);
@@ -264,28 +240,21 @@ async function calc(){
   let final=base-discount;
   if(final<1.0) final=1.0;
 
-  // 최대 대출 한도 적용
   let loan = jeonseVal*0.8;
   if(loan > 150000000) loan = 150000000;
+  const selfMoneyCalc=jeonseVal-loan;
+  const monthly=Math.floor((loan*(final/100))/12);
 
-  const selfMoneyCalc = jeonseVal - loan;
-  const monthly = Math.floor((loan*(final/100))/12);
-
-  // 결과 표시
-  r.querySelector("#incomeText").innerText = "연소득: " + formatKRWText(incomeVal);
-  r.querySelector("#jeonseText").innerText = "전세금: " + formatKRWText(jeonseVal);
+  const r = document.getElementById("result");
   r.querySelector("#interest").innerText = comma(monthly)+"원";
   r.querySelector("#baseRate").innerText = base.toFixed(1)+"%";
   r.querySelector("#discountRate").innerText = discount.toFixed(1)+"%p";
   r.querySelector("#finalRate").innerText = final.toFixed(1)+"%";
   r.querySelector("#selfMoney").innerText = comma(selfMoneyCalc)+"원";
   r.querySelector("#detail").innerText = "우대 적용: "+applied.join(", ");
-
+  
   r.style.display="block";
-  r.scrollIntoView({ behavior: "smooth" });
-  warn.innerText = "계산 완료!";
 }
 </script>
 </body>
 </html>
-
