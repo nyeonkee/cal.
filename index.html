@@ -6,6 +6,7 @@
 <title>청년버팀목대출 계산기</title>
 
 <style>
+  /* 기본 스타일 */
   body {
     margin: 0;
     background: #f2f4f6;
@@ -18,31 +19,24 @@
     padding: 20px;
   }
 
+  /* 카드 */
   .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.06);
-    margin-bottom: 16px;
+    background: linear-gradient(145deg, #ffffff, #f9faff);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(0,0,0,0.12);
   }
 
-  h1 {
-    font-size: 20px;
-    margin-bottom: 6px;
-  }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  .sub { font-size: 13px; color: #777; margin-bottom: 16px; }
 
-  .sub {
-    font-size: 13px;
-    color: #777;
-    margin-bottom: 16px;
-  }
-
-  label {
-    font-size: 13px;
-    color: #555;
-    display: block;
-    margin-top: 12px;
-  }
+  label { font-size: 13px; color: #555; display: block; margin-top: 12px; }
 
   input[type="text"],
   input[type="number"] {
@@ -50,74 +44,102 @@
     padding: 14px;
     margin-top: 6px;
     font-size: 15px;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid #ddd;
-    box-sizing: border-box;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  input:focus {
+    border-color: #2d7cff;
+    box-shadow: 0 0 8px rgba(45,124,255,0.3);
+    outline: none;
   }
 
-  .check-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 12px;
-  }
-
+  /* 체크박스 커스텀 */
+  .check-group { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
   .check-item {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 14px;
+    cursor: pointer;
+  }
+  .check-item input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid #ccc;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check-item input[type="checkbox"]:checked {
+    background-color: #2d7cff;
+    border-color: #2d7cff;
+  }
+  .check-item input[type="checkbox"]:checked::after {
+    content: "✓";
+    color: #fff;
+    position: absolute;
+    top: 0;
+    left: 3px;
+    font-size: 14px;
   }
 
-  .check-item input {
-    width: 18px;
-    height: 18px;
-  }
-
+  /* 버튼 */
   button {
     width: 100%;
     margin-top: 20px;
     padding: 16px;
     border: none;
-    border-radius: 14px;
-    background: #2d7cff;
+    border-radius: 18px;
+    background: linear-gradient(90deg, #2d7cff, #1c5ed6);
     color: #fff;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
+    transition: background 0.3s;
   }
+  button:hover { background: linear-gradient(90deg, #1c5ed6, #1251a2); }
+  button:disabled { background: #ccc; cursor: not-allowed; }
 
+  /* 결과 카드 */
   .result {
     display: none;
+    transition: opacity 0.3s, transform 0.3s;
+    opacity: 0;
+    transform: translateY(10px);
+    background: #e8f0ff;
+    border-radius: 20px;
+    padding: 24px;
   }
-
-  .result div {
-    margin: 6px 0;
-    font-size: 15px;
-  }
+  .result.show { display: block; opacity: 1; transform: translateY(0); }
 
   .highlight {
-    font-size: 26px;
-    font-weight: 800;
-    color: #2d7cff;
-    margin-bottom: 12px;
+    font-size: 28px;
+    font-weight: 900;
+    color: #1c5ed6;
+    text-align: center;
+    margin-bottom: 16px;
   }
 
-  .warn {
-    color: #e33;
-    font-size: 13px;
-    margin-top: 10px;
-  }
+  .warn { color: #e33; font-size: 13px; margin-top: 10px; }
 
   .blog-note {
     font-size: 12px;
     color: #555;
     margin-top: 12px;
+    text-align: center;
   }
+  .blog-note a { color: #2d7cff; text-decoration: none; font-weight: 600; }
 
-  .blog-note a {
-    color: #2d7cff;
-    text-decoration: none;
-    font-weight: 600;
+  /* 로딩 */
+  .loading {
+    text-align: center;
+    font-size: 14px;
+    color: #1c5ed6;
+    margin-top: 12px;
+    display: none;
   }
 
   footer {
@@ -147,18 +169,19 @@
 
     <label>금리 우대</label>
     <div class="check-group">
-      <div class="check-item"><input type="checkbox" id="basic" />기초·차상위</div>
-      <div class="check-item"><input type="checkbox" id="single" />한부모가구</div>
-      <div class="check-item"><input type="checkbox" id="weak" />취약가구</div>
-      <div class="check-item"><input type="checkbox" id="rent" />월세 성실납부</div>
-      <div class="check-item"><input type="checkbox" id="econtract" />전자계약</div>
-      <div class="check-item"><input type="checkbox" id="young" />25세 미만 단독</div>
-      <div class="check-item"><input type="checkbox" id="company" />중소기업 청년</div>
-      <div class="check-item"><input type="checkbox" id="thirty" />대출 30% 이하</div>
-      <div class="check-item"><input type="checkbox" id="local" />지방 주택</div>
+      <label class="check-item"><input type="checkbox" id="basic" />기초·차상위</label>
+      <label class="check-item"><input type="checkbox" id="single" />한부모가구</label>
+      <label class="check-item"><input type="checkbox" id="weak" />취약가구</label>
+      <label class="check-item"><input type="checkbox" id="rent" />월세 성실납부</label>
+      <label class="check-item"><input type="checkbox" id="econtract" />전자계약</label>
+      <label class="check-item"><input type="checkbox" id="young" />25세 미만 단독</label>
+      <label class="check-item"><input type="checkbox" id="company" />중소기업 청년</label>
+      <label class="check-item"><input type="checkbox" id="thirty" />대출 30% 이하</label>
+      <label class="check-item"><input type="checkbox" id="local" />지방 주택</label>
     </div>
 
-    <button onclick="calc()">계산하기</button>
+    <button id="calcBtn" onclick="calc()">계산하기</button>
+    <div class="loading" id="loading">계산 중…</div>
     <div class="warn" id="warn"></div>
   </div>
 
@@ -172,7 +195,7 @@
     <div class="blog-note">
       본 계산기는 참고용이며, 실제 대출 조건과 다를 수 있습니다. 
       정확한 사항과 계산방법은 
-      <a href="https://your-blog-link.com" target="_blank">블로그</a>에서 꼭 확인하세요.
+      <a href="https://m.blog.naver.com/mooonda" target="_blank">블로그</a>에서 꼭 확인하세요.
     </div>
   </div>
 
@@ -192,67 +215,83 @@ const comma = n => n.toLocaleString();
 });
 
 async function calc(){
-  warn.innerText="";
-  result.style.display="none";
+  const btn = document.getElementById("calcBtn");
+  const loading = document.getElementById("loading");
+  const warn = document.getElementById("warn");
+
+  warn.innerText = "";
+  document.getElementById("result").classList.remove("show");
+  loading.style.display = "block";
+  btn.disabled = true;
 
   const incomeVal = Number(income.value.replace(/,/g,""));
   const jeonseVal = Number(jeonse.value.replace(/,/g,""));
   const child = Number(children.value||0);
 
   if(incomeVal>75000000||jeonseVal>300000000){
+    loading.style.display="none";
+    btn.disabled = false;
     warn.innerText="연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
     return;
   }
 
-  const res = await fetch(WEB_APP_URL);
-  const data = await res.json();
-  let base = data.baseRate;
-  let discount = 0;
-  let applied=[];
+  try {
+    const res = await fetch(WEB_APP_URL);
+    const data = await res.json();
+    let base = data.baseRate;
+    let discount = 0;
+    let applied=[];
 
-  let candidates=[];
-  if(basic.checked&&incomeVal<=40000000) candidates.push({v:1.0,t:"기초·차상위"});
-  if(single.checked&&incomeVal<=50000000) candidates.push({v:1.0,t:"한부모"});
-  if(weak.checked) candidates.push({v:0.2,t:"취약가구"});
-  if(child>=1){
-    const v=child===1?0.3:child===2?0.5:0.7;
-    candidates.push({v:v,t:`다자녀(${child}명)`});
+    let candidates=[];
+    if(basic.checked&&incomeVal<=40000000) candidates.push({v:1.0,t:"기초·차상위"});
+    if(single.checked&&incomeVal<=50000000) candidates.push({v:1.0,t:"한부모"});
+    if(weak.checked) candidates.push({v:0.2,t:"취약가구"});
+    if(child>=1){
+      const v=child===1?0.3:child===2?0.5:0.7;
+      candidates.push({v:v,t:`다자녀(${child}명)`});
+    }
+
+    if(candidates.length){
+      candidates.sort((a,b)=>b.v-a.v);
+      discount+=candidates[0].v;
+      applied.push(candidates[0].t);
+    }
+
+    if(rent.checked){discount+=0.2;applied.push("월세 성실납부");}
+    if(econtract.checked){discount+=0.1;applied.push("전자계약");}
+    if(young.checked){discount+=0.3;applied.push("25세 미만 단독");}
+    if(company.checked){discount+=0.3;applied.push("중소기업 청년");}
+    if(thirty.checked){discount+=0.2;applied.push("대출 30% 이하");}
+    if(local.checked){discount+=0.2;applied.push("지방 주택");}
+
+    let max=0.5;
+    if(applied.includes("기초·차상위")||applied.includes("한부모")) max=1.0;
+    else if(child>=1) max=0.7;
+    discount=Math.min(discount,max);
+
+    let final=base-discount;
+    if(final<1.0) final=1.0;
+
+    const loan=jeonseVal*0.8;
+    const selfMoneyCalc=jeonseVal-loan;
+    const monthly=Math.floor((loan*(final/100))/12);
+
+    const r = document.getElementById("result");
+    r.querySelector("#interest").innerText = comma(monthly)+"원";
+    r.querySelector("#baseRate").innerText = base.toFixed(1)+"%";
+    r.querySelector("#discountRate").innerText = discount.toFixed(1)+"%p";
+    r.querySelector("#finalRate").innerText = final.toFixed(1)+"%";
+    r.querySelector("#selfMoney").innerText = comma(selfMoneyCalc)+"원";
+    r.querySelector("#detail").innerText = "우대 적용: "+applied.join(", ");
+
+    loading.style.display = "none";
+    btn.disabled = false;
+    r.classList.add("show");
+  } catch(e){
+    loading.style.display = "none";
+    btn.disabled = false;
+    warn.innerText = "계산 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
   }
-
-  if(candidates.length){
-    candidates.sort((a,b)=>b.v-a.v);
-    discount+=candidates[0].v;
-    applied.push(candidates[0].t);
-  }
-
-  if(rent.checked){discount+=0.2;applied.push("월세 성실납부");}
-  if(econtract.checked){discount+=0.1;applied.push("전자계약");}
-  if(young.checked){discount+=0.3;applied.push("25세 미만 단독");}
-  if(company.checked){discount+=0.3;applied.push("중소기업 청년");}
-  if(thirty.checked){discount+=0.2;applied.push("대출 30% 이하");}
-  if(local.checked){discount+=0.2;applied.push("지방 주택");}
-
-  let max=0.5;
-  if(applied.includes("기초·차상위")||applied.includes("한부모")) max=1.0;
-  else if(child>=1) max=0.7;
-  discount=Math.min(discount,max);
-
-  let final=base-discount;
-  if(final<1.0) final=1.0;
-
-  const loan=jeonseVal*0.8;
-  const selfMoneyCalc=jeonseVal-loan;
-  const monthly=Math.floor((loan*(final/100))/12);
-
-  const r = document.getElementById("result");
-  r.querySelector("#interest").innerText = comma(monthly)+"원";
-  r.querySelector("#baseRate").innerText = base.toFixed(1)+"%";
-  r.querySelector("#discountRate").innerText = discount.toFixed(1)+"%p";
-  r.querySelector("#finalRate").innerText = final.toFixed(1)+"%";
-  r.querySelector("#selfMoney").innerText = comma(selfMoneyCalc)+"원";
-  r.querySelector("#detail").innerText = "우대 적용: "+applied.join(", ");
-  
-  r.style.display="block";
 }
 </script>
 </body>
