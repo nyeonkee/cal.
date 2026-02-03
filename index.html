@@ -304,10 +304,9 @@ const comma = n => n.toLocaleString();
   });
 });
 
-function calc(){
-
+function calc(event){
   const btn = event?.target;
-if(btn) btn.disabled = true;
+  if(btn) btn.disabled = true;
 
   const warn = document.getElementById("warn");
   const r = document.getElementById("result");
@@ -319,16 +318,16 @@ if(btn) btn.disabled = true;
   const jeonseVal = Number(jeonse.value.replace(/,/g,""));
   const child = Number(children.value || 0);
 
-    if(!incomeVal || !jeonseVal){
-  warn.innerText = "연소득과 전세금을 입력해 주세요";
-  if(btn) btn.disabled = false;
-  return;
+  if(!incomeVal || !jeonseVal){
+    warn.innerText = "연소득과 전세금을 입력해 주세요";
+    if(btn) btn.disabled = false;
+    return;
   }
 
   if(incomeVal > 75000000 || jeonseVal > 300000000){
-  warn.innerText = "연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
-  if(btn) btn.disabled = false;
-  return;
+    warn.innerText = "연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
+    if(btn) btn.disabled = false;
+    return;
   }
 
   let base = getBaseRate(incomeVal);
@@ -362,9 +361,9 @@ if(btn) btn.disabled = true;
   else if(child>=1) max = 0.7;
   discount = Math.min(discount, max);
 
-const note = document.getElementById("discountNote");
-const rawDiscount = candidates.reduce((s,c)=>s+c.v,0);
-note.style.display = rawDiscount > max ? "block" : "none";
+  const note = document.getElementById("discountNote");
+  const rawDiscount = candidates.reduce((s,c)=>s+c.v,0);
+  note.style.display = rawDiscount > max ? "block" : "none";
 
   let final = Math.max(base - discount, 1.0);
 
@@ -382,16 +381,15 @@ note.style.display = rawDiscount > max ? "block" : "none";
 
   setTimeout(()=>{
     r.classList.add("show");
-window.scrollTo({top:r.offsetTop-12,behavior:"smooth"});
+    window.scrollTo({top:r.offsetTop-12, behavior:"smooth"});
   },120);
 
-if(btn){
-  setTimeout(()=>{
-    btn.disabled = false;
-  },300);
-}
+  if(btn){
+    setTimeout(()=>{ btn.disabled = false; }, 300);
+  }
 
-updateURL(incomeVal, jeonseVal, child);
+  updateURL(incomeVal, jeonseVal, child);
+}
 
 function resetForm(){
  ["income","jeonse","children"].forEach(id=>{
