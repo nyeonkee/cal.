@@ -156,6 +156,9 @@ display: block;
 }
 
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 </head>
 
 <body>
@@ -174,7 +177,7 @@ display: block;
 <div class="unit-text" id="jeonseUnit"></div>
 
     <label>자녀수 (명)</label>
-    <input id="children" type="number" placeholder="예: 1" />
+<input id="children" type="number" min="0" step="1" placeholder="예: 1" />
 
     <label>금리 우대</label>
 <div class="check-group">
@@ -227,6 +230,7 @@ display: block;
 </div>
 
     <button onclick="calc()">계산하기</button>
+<button style="background:#eee;color:#555" onclick="resetForm()">초기화</button>
     <div class="warn" id="warn"></div>
   </div>
 
@@ -237,8 +241,15 @@ display: block;
     <div>최종금리: <span id="finalRate"></span></div>
     <div>본인 투입금액: <span id="selfMoney"></span></div>
     <div id="detail"></div>
+<div id="discountNote" class="blog-note" style="display:none; color:#e33;">
+  ※ 우대금리는 조건별 최대 한도까지만 적용됩니다.
+</div>
+
 <button id="shareBtn" onclick="shareResult()">결과 공유하기</button>
 
+<button id="captureBtn" style="margin-top:8px" onclick="saveImage()">
+  결과 이미지로 저장
+</button>
 
     <div class="blog-note">
       본 계산기는 <strong>일시상환 기준 참고용</strong>입니다.<br>
@@ -294,6 +305,10 @@ const comma = n => n.toLocaleString();
 });
 
 function calc(){
+
+  const btn = event?.target;
+if(btn) btn.disabled = true;
+
   const warn = document.getElementById("warn");
   const r = document.getElementById("result");
 
@@ -304,14 +319,16 @@ function calc(){
   const jeonseVal = Number(jeonse.value.replace(/,/g,""));
   const child = Number(children.value || 0);
 
-  if(!incomeVal || !jeonseVal){
-    warn.innerText = "연소득과 전세금을 입력해 주세요";
-    return;
+    if(!incomeVal || !jeonseVal){
+  warn.innerText = "연소득과 전세금을 입력해 주세요";
+  if(btn) btn.disabled = false;
+  return;
   }
 
   if(incomeVal > 75000000 || jeonseVal > 300000000){
-    warn.innerText = "연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
-    return;
+  warn.innerText = "연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
+  if(btn) btn.disabled = false;
+  return;
   }
 
   let base = getBaseRate(incomeVal);
@@ -345,6 +362,10 @@ function calc(){
   else if(child>=1) max = 0.7;
   discount = Math.min(discount, max);
 
+const note = document.getElementById("discountNote");
+const rawDiscount = candidates.reduce((s,c)=>s+c.v,0);
+note.style.display = rawDiscount > max ? "block" : "none";
+
   let final = Math.max(base - discount, 1.0);
 
   let loan = Math.min(jeonseVal * 0.8, 150000000);
@@ -358,12 +379,55 @@ function calc(){
   detail.innerText = "우대 적용: " + (applied.length ? applied.join(", ") : "없음");
 
   r.style.display = "block";
+
   setTimeout(()=>{
     r.classList.add("show");
-    window.scrollTo({top:r.offsetTop-12,behavior:"smooth"});
+window.scrollTo({top:r.offsetTop-12,behavior:"smooth"});
   },120);
 
-  updateURL(incomeVal, jeonseVal, child);
+if(btn){
+  setTimeout(()=>{
+    btn.disabled = false;
+  },300);
+}
+
+updateURL(incomeVal, jeonseVal, child);
+
+function resetForm(){
+ ["income","jeonse","children"].forEach(id=>{
+    document.getElementById(id).value = "";
+    const u = document.getElementById(id+"Unit");
+    if(u) u.innerText = "";
+  });
+
+document.querySelectorAll("input[type=checkbox]").forEach(c=>c.checked=false);
+ document.getElementById("result").classList.remove("show");
+document.getElementById("result").style.display = "none";
+
+  document.getElementById("warn").innerText = "";
+  history.replaceState(null,"",location.pathname);
+}
+
+function saveImage(){
+  const card = document.getElementById("result");
+  const buttons = card.querySelectorAll("button");
+
+  buttons.forEach(b=>b.style.display="none");
+
+  html2canvas(card).then(canvas=>{
+    const ctx = canvas.getContext("2d");
+
+    ctx.font = "12px Apple SD Gothic Neo";
+    ctx.fillStyle = "#666";
+    ctx.fillText("ⓒ 청년버팀목대출 계산기 · mooonda", 12, canvas.height - 12);
+
+    buttons.forEach(b=>b.style.display="block");
+
+    const link = document.createElement("a");
+    link.download = "청년버팀목대출_계산결과.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
 }
 
 function shareResult(){
@@ -371,10 +435,10 @@ function shareResult(){
 
   if(navigator.share){
     navigator.share({
-      title: "청년버팀목대출 계산기",
-      text: "내 조건 기준 월 이자 계산 결과",
-      url
-    });
+  title: "청년버팀목대출 계산기",
+  text: "내 조건 기준 월 이자 계산 결과입니다",
+  url
+});
   } else {
     navigator.clipboard.writeText(url).then(()=>{
       alert("결과 링크가 복사되었습니다");
@@ -383,8 +447,19 @@ function shareResult(){
 }
 
 function updateURL(income, jeonse, child){
-  const params = new URLSearchParams({ income, jeonse, child });
-  history.replaceState(null,"","?"+params.toString());
+  const checks = {};
+  document.querySelectorAll(".check-group input").forEach(c=>{
+    checks[c.id] = c.checked ? 1 : 0;
+  });
+
+  const params = new URLSearchParams({
+    income,
+    jeonse,
+    child,
+    ...checks
+  });
+
+history.replaceState(null,"","?"+params.toString());
 }
 
 function loadFromURL(){
@@ -397,6 +472,10 @@ function loadFromURL(){
 
   incomeUnit.innerText = formatUnit(+p.get("income"));
   jeonseUnit.innerText = formatUnit(+p.get("jeonse"));
+
+document.querySelectorAll(".check-group input").forEach(c=>{
+  if(p.has(c.id)) c.checked = p.get(c.id) === "1";
+});
 
   calc();
 }
