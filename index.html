@@ -62,6 +62,7 @@
 .check-item span {
   white-space: nowrap;
   flex: 1;                  
+text-align: left;
 }
 
   button {
@@ -235,7 +236,9 @@ const comma = n => n.toLocaleString();
 });
 
 function calc(){
-  
+
+const warn = document.getElementById("warn");
+
 const r = document.getElementById("result");
 
   warn.innerText = "";
