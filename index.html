@@ -48,17 +48,15 @@
     margin-top: 12px;
   }
 
-  .check-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-  }
+.check-item {
+  font-size: 14px;
+}
 
 .check-item label {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
 }
 
   button {
@@ -96,12 +94,13 @@
     transform: scale(1);
   }
 
-  .highlight {
-    font-size: 28px;
-    font-weight: 800;
-    color: #2d7cff;
-    margin-bottom: 12px;
-  }
+.highlight {
+  font-size: 34px;
+  font-weight: 900;
+  color: #2d7cff;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
 
   .result div {
     margin: 6px 0;
@@ -155,15 +154,50 @@
     <label>금리 우대</label>
     <div class="check-group">
       <div class="check-item">
-      <label><input type="checkbox" id="basic">기초·차상위</label></div>
-      <div class="check-item"><label><input type="checkbox" id="single">한부모가구</label></div>
-      <div class="check-item"><label><input type="checkbox" id="weak">취약가구</label></div>
-      <div class="check-item"><label><input type="checkbox" id="rent">월세 성실납부</label></div>
-      <div class="check-item"><label><input type="checkbox" id="econtract">전자계약</label></div>
-      <div class="check-item"><label><input type="checkbox" id="young">25세 미만 단독</label></div>
-      <div class="check-item"></mlabel><input type="checkbox" id="company">중소기업 청년</label></div>
-      <div class="check-item"><label><input type="checkbox" id="thirty">대출 30% 이하</label></div>
-      <div class="check-item"><label><input type="checkbox" id="local">지방 주택</label></div>
+      <label>
+<input type="checkbox" id="basic">기초·차상위
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="single">한부모가구
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="weak">취약가구
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="rent">월세 성실납부
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="econtract">전자계약
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="young">25세 미만 단독
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="company">중소기업 청년
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="thirty">대출 30% 이하
+</label>
+</div>
+      <div class="check-item">
+<label>
+<input type="checkbox" id="local">지방 주택
+</label>
+</div>
     </div>
 
     <button onclick="calc()">계산하기</button>
@@ -219,6 +253,8 @@ function calc(){
     warn.innerText = "연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
     document.getElementById("loadingOverlay").style.display = "none";
     return;
+
+r.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   let base = getBaseRate(incomeVal);
