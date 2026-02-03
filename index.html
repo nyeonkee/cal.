@@ -52,7 +52,8 @@
 .check-item {
   display: flex;
   align-items: center;
-  gap: 8px;        
+  gap: 8px;
+cursor: pointer;
 }
 
 .check-item input {
@@ -66,6 +67,7 @@ margin-right: 0;
 .check-item span {
   flex: 1;
   word-break: keep-all;
+cursor: pointer;
 }
 
   button {
@@ -89,6 +91,7 @@ margin-right: 0;
   }
 
   .result {
+display: none;
     background: #f0f8ff;
     border-radius: 16px;
     padding: 20px;
@@ -300,6 +303,7 @@ r.style.display = "block";
 
 setTimeout(() => {
   r.scrollIntoView({ behavior: "smooth", block: "start" });
+window.scrollBy(0, -10);
 }, 50);
   interest.innerText = comma(monthly) + "원";
   baseRate.innerText = base.toFixed(1) + "%";
