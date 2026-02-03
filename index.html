@@ -52,8 +52,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
-  margin-bottom: 6px;
+  width: 100%;              
 }
 
 .check-item input {
@@ -62,6 +61,7 @@
 
 .check-item span {
   white-space: nowrap;
+  flex: 1;                  
 }
 
   button {
@@ -238,7 +238,6 @@ function calc(){
   
 const r = document.getElementById("result");
 
-document.getElementById("loadingOverlay").style.display = "flex";
   warn.innerText = "";
 
   const incomeVal = Number(income.value.replace(/,/g,""));
@@ -247,7 +246,7 @@ document.getElementById("loadingOverlay").style.display = "flex";
 
   if(incomeVal > 75000000 || jeonseVal > 300000000){
     warn.innerText = "연소득 7,500만원 또는 전세금 3억원 초과 시 계산 불가";
-    document.getElementById("loadingOverlay").style.display = "none";
+    
     return;
 
 r.scrollIntoView({ behavior: "smooth", block: "start" });
