@@ -204,7 +204,7 @@ async function calc(){
     return;
   }
 
-  const res = await fetch(https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLh2TVMTpXCYO1AzcVggX9HZf3WHL7N1vsPHfmGxx6s592IBam8Z51__hnacV1lEXrPoT0OPvSUX8pXNIrcmDM9cSl6t4A3CBnNu-9dHdUpzCCN3eJD1lMpUNNGuhSS9IwYDLMfEXuvdQ_5K6R2BMuBs_Oxl6b8nIw79uwRMCXr_P5ERJn3ZFQWrpvSUurlISFG3dflpNbzNAIwybOXEoWpmRHRKweLokINEV7ucf2u_jH-TLFSTKCoNbv7hrd_zrBOzrCaop11ohZTHh5m8ZO0T0Udh6Q&lib=McujhMwZSXAj5r31WpYZO14Lq-ofEAQ5F);
+  const res = await fetch(web_app_url);
   const data = await res.json();
   let base = data.baseRate;
   let discount = 0;
@@ -258,3 +258,4 @@ async function calc(){
 </script>
 </body>
 </html>
+
