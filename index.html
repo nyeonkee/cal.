@@ -1,3 +1,4 @@
+계산됨, 버그(체크박스 글자) 수정, 스크롤 자동 등
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -49,14 +50,19 @@
   }
 
 .check-item {
-  font-size: 14px;
-}
-
-.check-item label {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: 100%;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.check-item input {
+  flex-shrink: 0;
+}
+
+.check-item span {
+  line-height: 1.4;
 }
 
   button {
@@ -152,53 +158,54 @@
     <input id="children" type="number" placeholder="예: 1" />
 
     <label>금리 우대</label>
-    <div class="check-group">
-      <div class="check-item">
-      <label>
-<input type="checkbox" id="basic">기초·차상위
-</label>
+<div class="check-group">
+
+  <div class="check-item">
+    <input type="checkbox" id="basic">
+    <span>기초·차상위</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="single">
+    <span>한부모가구</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="weak">
+    <span>취약가구</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="rent">
+    <span>월세 성실납부</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="econtract">
+    <span>전자계약</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="young">
+    <span>25세 미만 단독</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="company">
+    <span>중소기업 청년</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="thirty">
+    <span>대출 30% 이하</span>
+  </div>
+
+  <div class="check-item">
+    <input type="checkbox" id="local">
+    <span>지방 주택</span>
+  </div>
+
 </div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="single">한부모가구
-</label>
-</div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="weak">취약가구
-</label>
-</div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="rent">월세 성실납부
-</label>
-</div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="econtract">전자계약
-</label>
-</div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="young">25세 미만 단독
-</label>
-</div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="company">중소기업 청년
-</label>
-</div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="thirty">대출 30% 이하
-</label>
-</div>
-      <div class="check-item">
-<label>
-<input type="checkbox" id="local">지방 주택
-</label>
-</div>
-    </div>
 
     <button onclick="calc()">계산하기</button>
     <div class="warn" id="warn"></div>
@@ -296,7 +303,11 @@ r.scrollIntoView({ behavior: "smooth", block: "start" });
   const monthly = Math.floor((loan * (final / 100)) / 12);
   const selfMoneyCalc = jeonseVal - loan;
 
-  result.classList.add("show");
+  r.classList.add("show");
+
+setTimeout(() => {
+  r.scrollIntoView({ behavior: "smooth", block: "start" });
+}, 50);
   interest.innerText = comma(monthly) + "원";
   baseRate.innerText = base.toFixed(1) + "%";
   discountRate.innerText = discount.toFixed(1) + "%p";
