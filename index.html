@@ -51,17 +51,19 @@
 .check-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;              
+  gap: 8px;        
 }
 
 .check-item input {
+  width: auto;     
+  padding: 0;
+  margin: 0;
   flex-shrink: 0;
 }
 
 .check-item span {
-  flex: 1;                  
-text-align: left;
+  flex: 1;
+  word-break: keep-all;
 }
 
   button {
@@ -309,3 +311,4 @@ setTimeout(() => {
 </script>
 </body>
 </html>
+
