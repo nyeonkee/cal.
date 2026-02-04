@@ -371,6 +371,9 @@ function resetForm(){
   r.classList.remove("show"); r.style.display="none";
   document.getElementById("warn").innerText="";
   history.replaceState(null,"",location.pathname);
+
+  // 스크롤 맨 위로 이동
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function addWatermark(card) {
