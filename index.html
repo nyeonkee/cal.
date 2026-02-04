@@ -384,13 +384,13 @@ function addWatermark(card) {
   div.innerText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
 
   // 카드 폭 기준 글자 크기 (작게)
-  const fontSize = Math.floor(card.offsetWidth * 0.05); // 5% → 작게
+  const fontSize = Math.floor(card.offsetWidth * 0.05); // 5%
 
   Object.assign(div.style, {
     position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%) rotate(-12deg)",
+    top: "8%",               // 상단에서 약간 여백
+    left: "50%",             // 가로 중앙
+    transform: "translateX(-50%)", // 수평만 중앙
     fontSize: fontSize + "px",
     fontWeight: "bold",
     color: "rgba(0,0,0,0.05)", // 은은하게
