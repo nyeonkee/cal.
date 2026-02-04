@@ -277,8 +277,6 @@ display: block;
 
 </div>
 
-<script>
-
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
 function formatUnit(v){
@@ -394,13 +392,36 @@ function saveImage(){
   html2canvas(card,{useCORS:true}).then(canvas=>{
     const ctx=canvas.getContext("2d");
     const year=new Date().getFullYear();
+
+    // 겹치는 워터마크 설정
+    const watermarkText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
+    ctx.font = "bold 36px Apple SD Gothic Neo, Noto Sans KR, sans-serif";
+    ctx.fillStyle = "rgba(0,0,0,0.08)"; // 연하게
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // 겹치게 반복
+    const step = 150;
+    for(let y=50; y<canvas.height; y+=step){
+      for(let x=50; x<canvas.width; x+=step){
+        ctx.save();
+        ctx.translate(x,y);
+        ctx.rotate(-Math.PI/6); // 45도 회전
+        ctx.fillText(watermarkText, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    // 기존 하단 저작권 표시 (겹쳐도 유지)
     ctx.font="12px Apple SD Gothic Neo, Noto Sans KR, sans-serif";
     ctx.fillStyle="#666";
     ctx.fillText(`ⓒ 청년버팀목대출 계산기 · mooonda ${year}`,12,canvas.height-12);
+
     buttons.forEach(b=>b.style.display="block");
     const link=document.createElement("a");
     link.download=`청년버팀목대출_계산결과_${year}.png`;
-    link.href=canvas.toDataURL(); link.click();
+    link.href=canvas.toDataURL(); 
+    link.click();
   });
 }
 
