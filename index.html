@@ -415,19 +415,19 @@ function addWatermark(card) {
 function saveImage() {
   const card = document.getElementById("result");
   const buttons = card.querySelectorAll("button");
-  buttons.forEach(b => b.style.display = "none");
+  buttons.forEach(b => b.style.display = "none"); // 버튼 숨기기
 
   addWatermark(card); // 워터마크 추가
 
   document.fonts.ready.then(() => {
-    html2canvas(card, {useCORS:true, scale: window.devicePixelRatio}).then(canvas => {
+    html2canvas(card, { useCORS:true, scale: window.devicePixelRatio }).then(canvas => {
       // 바로 다운로드
       const link = document.createElement("a");
       link.download = `청년버팀목대출_계산결과_${new Date().getFullYear()}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
 
-      // 캡처 후 워터마크 제거 + 버튼 복원
+      // 워터마크 제거 + 버튼 다시 표시
       const wm = card.querySelector(".watermark");
       if(wm) wm.remove();
       buttons.forEach(b => b.style.display = "block");
