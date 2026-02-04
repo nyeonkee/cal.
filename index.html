@@ -373,66 +373,65 @@ function resetForm(){
   history.replaceState(null,"",location.pathname);
 }
 
-function drawWatermark(canvas) {
-  const ctx = canvas.getContext("2d");
+function addWatermark(card) {
+  // 기존 워터마크 있으면 제거
+  let existing = card.querySelector(".watermark");
+  if(existing) existing.remove();
+
   const year = new Date().getFullYear();
-  const watermarkText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
+  const div = document.createElement("div");
+  div.className = "watermark";
+  div.innerText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
 
-  // 워터마크 스타일
-  ctx.font = "bold 28px Apple SD Gothic Neo, Noto Sans KR, sans-serif"; // 크게
-  ctx.fillStyle = "rgba(0,0,0,0.15)"; // 더 선명하게
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  Object.assign(div.style, {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%) rotate(-12deg)",
+    fontSize: "28px",
+    fontWeight: "bold",
+    color: "rgba(0,0,0,0.15)",
+    textAlign: "center",
+    pointerEvents: "none",
+    whiteSpace: "nowrap",
+    zIndex: "9999"
+  });
 
-  // 중앙
-  const x = canvas.width / 2;
-  const y = canvas.height / 2;
-
-  // 회전 조금 주면 복제 방지
-  const angle = -0.15; // 라디안 약 -8도
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(angle);
-  ctx.fillText(watermarkText, 0, 0);
-  ctx.restore();
+  card.appendChild(div);
 }
 
-function saveImage(){
+function saveImage() {
   const card = document.getElementById("result");
   const buttons = card.querySelectorAll("button");
-  buttons.forEach(b => b.style.display="none");
+  buttons.forEach(b => b.style.display = "none");
+
+  addWatermark(card); // 워터마크 추가
 
   document.fonts.ready.then(() => {
-    html2canvas(card, {
-      useCORS: true,
-      scale: window.devicePixelRatio
-    }).then(canvas => {
-      drawWatermark(canvas); // 워터마크 추가
-
-      buttons.forEach(b => b.style.display="block");
-
+    html2canvas(card, {useCORS:true, scale: window.devicePixelRatio}).then(canvas => {
       const link = document.createElement("a");
       link.download = `청년버팀목대출_계산결과_${new Date().getFullYear()}.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = canvas.toDataURL();
       link.click();
+
+      // 캡처 후 워터마크 제거 + 버튼 복원
+      const wm = card.querySelector(".watermark");
+      if(wm) wm.remove();
+      buttons.forEach(b => b.style.display = "block");
     });
   });
 }
 
-function viewImage(){
+function viewImage() {
   const card = document.getElementById("result");
   const buttons = card.querySelectorAll("button");
-  buttons.forEach(b => b.style.display="none");
+  buttons.forEach(b => b.style.display = "none");
+
+  addWatermark(card); // 워터마크 추가
 
   document.fonts.ready.then(() => {
-    html2canvas(card, {
-      useCORS: true,
-      scale: window.devicePixelRatio
-    }).then(canvas => {
-      drawWatermark(canvas); // 워터마크 추가
-      buttons.forEach(b => b.style.display="block");
-
-      const dataURL = canvas.toDataURL("image/png");
+    html2canvas(card, {useCORS:true, scale: window.devicePixelRatio}).then(canvas => {
+      const dataURL = canvas.toDataURL();
       const win = window.open();
       if(win){
         win.document.write(`<img src="${dataURL}" style="max-width:100%;">`);
@@ -440,6 +439,11 @@ function viewImage(){
       } else {
         alert("팝업 차단을 해제해주세요.");
       }
+
+      // 워터마크 제거 + 버튼 복원
+      const wm = card.querySelector(".watermark");
+      if(wm) wm.remove();
+      buttons.forEach(b => b.style.display = "block");
     });
   });
 }
