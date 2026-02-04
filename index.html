@@ -421,9 +421,10 @@ function saveImage() {
 
   document.fonts.ready.then(() => {
     html2canvas(card, {useCORS:true, scale: window.devicePixelRatio}).then(canvas => {
+      // 바로 다운로드
       const link = document.createElement("a");
       link.download = `청년버팀목대출_계산결과_${new Date().getFullYear()}.png`;
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL("image/png");
       link.click();
 
       // 캡처 후 워터마크 제거 + 버튼 복원
