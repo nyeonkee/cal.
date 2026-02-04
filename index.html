@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -372,61 +373,66 @@ function resetForm(){
   history.replaceState(null,"",location.pathname);
 }
 
-function saveImage(){
-  const card=document.getElementById("result");
-  const buttons=card.querySelectorAll("button");
-  buttons.forEach(b=>b.style.display="none"); // 캡처 전 버튼 숨기기
+function drawWatermark(canvas) {
+  const ctx = canvas.getContext("2d");
+  const year = new Date().getFullYear();
+  const watermarkText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
 
-  // 폰트 로딩 후 캡처
+  // 워터마크 스타일
+  ctx.font = "bold 28px Apple SD Gothic Neo, Noto Sans KR, sans-serif"; // 크게
+  ctx.fillStyle = "rgba(0,0,0,0.15)"; // 더 선명하게
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // 중앙
+  const x = canvas.width / 2;
+  const y = canvas.height / 2;
+
+  // 회전 조금 주면 복제 방지
+  const angle = -0.15; // 라디안 약 -8도
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.fillText(watermarkText, 0, 0);
+  ctx.restore();
+}
+
+function saveImage(){
+  const card = document.getElementById("result");
+  const buttons = card.querySelectorAll("button");
+  buttons.forEach(b => b.style.display="none");
+
   document.fonts.ready.then(() => {
     html2canvas(card, {
       useCORS: true,
-      scale: window.devicePixelRatio // PC/모바일 모두 선명하게
+      scale: window.devicePixelRatio
     }).then(canvas => {
-      const ctx = canvas.getContext("2d");
+      drawWatermark(canvas); // 워터마크 추가
 
-      // 중앙 워터마크
-const year = new Date().getFullYear();
-const watermarkText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
-ctx.font = "bold 14px Apple SD Gothic Neo, Noto Sans KR, sans-serif"; // 작게
-ctx.fillStyle = "rgba(0,0,0,0.05)"; // 연하게
-ctx.textAlign = "center";
-ctx.textBaseline = "middle";
-ctx.fillText(watermarkText, canvas.width / 2, canvas.height / 2);
+      buttons.forEach(b => b.style.display="block");
 
-      // 버튼 다시 표시
-      buttons.forEach(b=>b.style.display="block");
-
-      // 이미지 다운로드
       const link = document.createElement("a");
-      link.download = `청년버팀목대출_계산결과_${year}.png`;
-      link.href = canvas.toDataURL();
+      link.download = `청년버팀목대출_계산결과_${new Date().getFullYear()}.png`;
+      link.href = canvas.toDataURL("image/png");
       link.click();
     });
   });
 }
-  
+
 function viewImage(){
   const card = document.getElementById("result");
   const buttons = card.querySelectorAll("button");
-  buttons.forEach(b=>b.style.display="none"); // 캡처 전 버튼 숨기기
+  buttons.forEach(b => b.style.display="none");
 
   document.fonts.ready.then(() => {
-    html2canvas(card, { useCORS:true, scale: window.devicePixelRatio }).then(canvas => {
-      const ctx = canvas.getContext("2d");
+    html2canvas(card, {
+      useCORS: true,
+      scale: window.devicePixelRatio
+    }).then(canvas => {
+      drawWatermark(canvas); // 워터마크 추가
+      buttons.forEach(b => b.style.display="block");
 
-      // 중앙 워터마크
-const year = new Date().getFullYear();
-const watermarkText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
-ctx.font = "bold 14px Apple SD Gothic Neo, Noto Sans KR, sans-serif"; // 작게
-ctx.fillStyle = "rgba(0,0,0,0.05)"; // 연하게
-ctx.textAlign = "center";
-ctx.textBaseline = "middle";
-ctx.fillText(watermarkText, canvas.width / 2, canvas.height / 2);
-
-      buttons.forEach(b=>b.style.display="block"); // 버튼 다시 표시
-
-      const dataURL = canvas.toDataURL();
+      const dataURL = canvas.toDataURL("image/png");
       const win = window.open();
       if(win){
         win.document.write(`<img src="${dataURL}" style="max-width:100%;">`);
