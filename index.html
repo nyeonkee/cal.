@@ -381,15 +381,15 @@ function addWatermark(card) {
   const year = new Date().getFullYear();
   const div = document.createElement("div");
   div.className = "watermark";
-  div.innerText = `ⓒ 청년버팀목대출 계산기 · mooonda ${year}`;
+  div.innerHTML = `ⓒ 청년버팀목대출<br>계산기 · mooonda ${year}`; // 2줄
 
-  // 카드 폭 기준 글자 크기 (작게)
-  const fontSize = Math.floor(card.offsetWidth * 0.05); // 5%
+  // 카드 폭 기준 글자 크기 (더 작게)
+  const fontSize = Math.floor(card.offsetWidth * 0.035); // 3.5%
 
   Object.assign(div.style, {
     position: "absolute",
-    top: "8%",               // 상단에서 약간 여백
-    left: "50%",             // 가로 중앙
+    top: "12%",               // 조금 아래로
+    left: "50%",              // 가로 중앙
     transform: "translateX(-50%)", // 수평만 중앙
     fontSize: fontSize + "px",
     fontWeight: "bold",
@@ -397,6 +397,7 @@ function addWatermark(card) {
     textAlign: "center",
     pointerEvents: "none",
     whiteSpace: "nowrap",
+    lineHeight: "1.2",
     zIndex: "9999",
     userSelect: "none"
   });
