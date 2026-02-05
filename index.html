@@ -161,9 +161,15 @@ display: block;
 
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-</head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXX');
+</script>
+  </head>
 
 <body>
 <div class="wrap">
@@ -403,7 +409,7 @@ function addWatermark(card) {
     color: "rgba(0,0,0,0.05)", // 은은하게
     textAlign: "center",
     pointerEvents: "none",
-    whiteSpace: "nowrap",
+    whiteSpace: "normal",
     lineHeight: "1.2",
     zIndex: "9999",
     userSelect: "none"
@@ -493,4 +499,5 @@ window.addEventListener("load", loadFromURL);
 </script>
 </body>
 </html>
+
 
